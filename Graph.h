@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <map>
+#include "Vertex.hpp"
 
 class Graph
 {
@@ -14,7 +16,8 @@ class Graph
 
     private:
 
-    std::vector<std::vector<int>> adjacency;
+    std::map < int, std::vector<Vertex> > adjacency;
+    std::map <int, Vertex> vertices;
 };
 
 #endif
