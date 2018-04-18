@@ -1,11 +1,10 @@
-#include "Graph.h"
+#include "Graph.hpp"
 
 #include "json.hpp"
 #include <iostream>
 #include <string> 
 #include <fstream>
 #include <map>
-
 
 using json = nlohmann::json;
 
@@ -25,15 +24,15 @@ Graph::Graph(std::string json_file)
     // iterate over vertexid : adjacency_list
     for (json::iterator it = j.begin(); it != j.end(); it++){
         auto const adj_json = it.value();
-        std::vector<Vertex> adj;
+        std::vector<Vertex*> adj;
         // iterate over adjacency list
         for (auto& vertexId: adj_json){
             int vId = vertexId.get<int>();
-            std::map<int, Vertex>::iterator v = vertices.find(vId);
+            std::map<int, Vertex*>::iterator v = vertices.find(vId);
             if (v == vertices.end()){
-                vertices[vId] = Vertex(vId);
+                vertices[vId] = new Vertex(vId);
             }
-            Vertex vertex = vertices[vId];
+            Vertex* vertex = vertices[vId];
             adj.push_back(vertex);
         }
         adjacency[std::stoi(it.key())] = adj;
@@ -52,8 +51,8 @@ Graph::Graph(std::string json_file)
 std::ostream& operator << (std::ostream& out, const Graph &graph){
     for (auto& it : graph.adjacency){
         out << it.first << ": [";
-        for (Vertex vertex : it.second){
-            out << vertex << ",";
+        for (Vertex* vertex : it.second){
+            out << *vertex << ",";
         }
         out << "]" << std::endl;
     }

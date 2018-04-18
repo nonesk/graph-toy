@@ -7,6 +7,7 @@
 #include <map>
 #include "Vertex.hpp"
 
+
 class Graph
 {
     public:
@@ -16,8 +17,8 @@ class Graph
 
     private:
 
-    std::map < int, std::vector<Vertex> > adjacency;
-    std::map <int, Vertex> vertices;
+    std::map < int, std::vector<Vertex*> > adjacency;
+    std::map <int, Vertex*> vertices;
 };
 
 #endif

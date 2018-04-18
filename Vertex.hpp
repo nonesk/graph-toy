@@ -10,11 +10,10 @@
 class Vertex{
     public:
 
-    Vertex(int);
-    Vertex(int idArg) : id(idArg){};
+    Vertex(int id);
 
 
-    int getId(){ return id; }
+    int id();
 
     /**
      * @brief Operator << overload
@@ -23,12 +22,10 @@ class Vertex{
      * @param vertex 
      * @return std::ostream& 
      */
-    friend std::ostream& operator<< (std::ostream &out, Vertex& vertex){
-        return out << vertex.getId();
-    }
+    friend std::ostream& operator<< (std::ostream &out, Vertex& vertex);
 
     private:
-    int id;
+    int id_;
 };
 
 

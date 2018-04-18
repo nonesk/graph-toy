@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "Graph.h"
+#include "Graph.hpp"
 
 int main(int, char**) {
    Graph testGraph (std::string("adjacency.json"));
