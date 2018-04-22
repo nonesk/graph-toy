@@ -34,9 +34,20 @@ Graph::Graph(std::string json_file)
             }
             Vertex* vertex = vertices[vId];
             adj.push_back(vertex);
+            vertexSet_.insert(vertex);
         }
         adjacency[std::stoi(it.key())] = adj;
     }
+    
+};
+
+
+std::set<Vertex*, classcomp>::iterator Graph::setBegin(){
+    return vertexSet_.begin();
+};
+
+std::set<Vertex*,classcomp>::iterator Graph::setEnd(){
+    return vertexSet_.end();
 };
 
 /**
@@ -59,3 +70,7 @@ std::ostream& operator << (std::ostream& out, const Graph &graph){
     return out;
 }
 
+
+std::pair<std::set<Vertex*, classcomp>::iterator, std::set<Vertex*,classcomp>::iterator> vertices(Graph g){
+    return {g.setBegin(), g.setEnd()};
+};

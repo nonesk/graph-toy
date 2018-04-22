@@ -13,7 +13,7 @@ class Vertex{
     Vertex(int id);
 
 
-    int id();
+    const int id() const;
 
     /**
      * @brief Operator << overload
@@ -23,6 +23,7 @@ class Vertex{
      * @return std::ostream& 
      */
     friend std::ostream& operator<< (std::ostream &out, Vertex& vertex);
+    //friend bool operator< (Vertex const* v1, Vertex const* v2) const;
 
     private:
     int id_;
