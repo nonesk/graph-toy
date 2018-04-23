@@ -3,12 +3,23 @@
 #include "Graph.hpp"
 
 int main(int, char**) {
-   Graph testGraph (std::string("adjacency.json"));
-   std::cout << testGraph << std::endl;
+    Graph g (std::string("adjacency.json"));
+    std::cout << g << std::endl;
 
-   for (auto it = vertices(testGraph).first ;
-        it != vertices(testGraph).second;
+    auto vertexIter = boost::vertices(g);
+
+    for (auto it = vertexIter.first ; 
+        it != vertexIter.second; 
         ++it){
-            std::cout<<**it<<std::endl;
+        std::cout<<**it<<std::endl;
+    }
+
+    std::cout<< "n = " << boost::num_vertices(g) << std::endl;
+
+    std::cout << "Edges : " << std::endl;
+    for (auto it = g.eBegin();
+        it != g.eEnd();
+        ++it){
+            std::cout<< *(*it)->first << '|' << *(*it)->second << std::endl;
         }
 }
