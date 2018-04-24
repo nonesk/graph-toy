@@ -123,6 +123,11 @@ Graph::vertex_descriptor Graph::getVertex(int id)
     return vMap[id];
 }
 
+Graph::edges_size_type Graph::eSize() const
+{
+    return edges_.size();
+}
+
 
 /***********************
  * BGL API
@@ -133,17 +138,17 @@ std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(Graph& g)
 };
 
 
-unsigned int num_vertices(const Graph& g)
+Graph::vertices_size_type num_vertices(const Graph& g)
 {
     return g.vSize();
 };
 
-Graph::vertex_descriptor source(Graph::edge_descriptor e, Graph& g)
+Graph::vertex_descriptor source(Graph::edge_descriptor e, const Graph& g)
 {
   return e->first;
 };
 
-Graph::vertex_descriptor target(Graph::edge_descriptor e, Graph& g)
+Graph::vertex_descriptor target(Graph::edge_descriptor e, const Graph& g)
 {
   return e->second;
 };
@@ -152,3 +157,14 @@ std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator> out_edges(Graph::v
 {
     return {g.out_edge_begin(u), g.out_edge_end(u)};
 }
+
+
+Graph::edges_size_type num_edges(const Graph& g)
+{
+    return g.eSize();
+};
+
+std::pair<Graph::edge_iterator, Graph::edge_iterator> edges(Graph& g)
+{
+    return { g.eBegin(), g.eEnd() };
+};

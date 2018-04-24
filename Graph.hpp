@@ -17,6 +17,8 @@ class Graph
 {
     public:
 
+    struct vertex_edge_list_tag : boost::vertex_list_graph_tag, boost::edge_list_graph_tag { };
+
     // GraphConcept Types
     using vertex_descriptor = Vertex*;
     using edge_descriptor = Edge*;
@@ -24,12 +26,17 @@ class Graph
     using edge_parallel_category = boost::allow_parallel_edge_tag;
 
     // VertexListConcept Types
-    using traversal_category = boost::vertex_list_graph_tag;
+    using traversal_category = vertex_edge_list_tag;
     using vertex_iterator = VertexSet::iterator;
     using vertices_size_type = unsigned int;
 
+    // EdgeListConcept Types
+    using edge_iterator = EdgeSet::iterator;
+    using edges_size_type = unsigned int;
+
     //IncidenceGraph Type
     using out_edge_iterator = EdgeSet::iterator;
+
 
 
     // constructor
@@ -39,7 +46,7 @@ class Graph
     VertexSet::iterator vBegin();
     VertexSet::iterator vEnd();
     Vertex* addVertex(int id);
-    unsigned int vSize() const;
+    vertices_size_type vSize() const;
     Vertex* getVertex(int id);
 
     // Edges
@@ -47,6 +54,7 @@ class Graph
     EdgeSet::iterator eEnd();
     Edge* addEdge(Vertex* v1, Vertex* v2);
     Edge* addEdge(int id1, int id2);
+    Graph::edges_size_type eSize() const;
 
     out_edge_iterator out_edge_begin(vertex_descriptor u);
     out_edge_iterator out_edge_end(vertex_descriptor u);
@@ -77,11 +85,15 @@ class Graph
 // VertexListConcept
 std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(Graph& g);
 std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(const Graph& g);
-unsigned int num_vertices(const Graph& g);
+Graph::vertices_size_type num_vertices(const Graph& g);
+
+// EdgesListConcept
+Graph::edges_size_type num_edges(const Graph& g);
+std::pair<Graph::edge_iterator, Graph::edge_iterator> edges(const Graph& g);
 
 // IncidenceGraphConcept
-Graph::vertex_descriptor source(Graph::edge_descriptor e, Graph& g);
-Graph::vertex_descriptor target(Graph::edge_descriptor e, Graph& g);
+Graph::vertex_descriptor source(Graph::edge_descriptor e, const Graph& g);
+Graph::vertex_descriptor target(Graph::edge_descriptor e, const Graph& g);
 std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator> out_edges(Graph::vertex_descriptor u, Graph& g);
 
 
@@ -100,11 +112,14 @@ namespace boost {
 
     // iterator typedefs...
     using vertex_iterator = Graph::vertex_iterator;
-
+    using edge_iterator = Graph::edge_iterator;
+    using out_edge_iterator = Graph::out_edge_iterator;
     using vertices_size_type = Graph::vertices_size_type;
+    using edges_size_type = Graph::edges_size_type;
   };
 
-  BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
+  BOOST_CONCEPT_ASSERT((VertexAndEdgeListGraphConcept<Graph>));
+  //BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
 } // namespace boost
 
 #endif
