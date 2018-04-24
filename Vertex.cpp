@@ -13,3 +13,14 @@ std::ostream& operator<< (std::ostream &out, Vertex& vertex){
 //     return v1->id() < v2->id();
 // }
 
+bool operator==(const Vertex& lhs, const Vertex& rhs) {
+    return rhs.id_ == lhs.id_;
+}
+
+bool operator!=(const Vertex& lhs, const Vertex& rhs) {
+    return not (lhs == rhs);
+}
+
+bool operator<(const Vertex& lhs, const Vertex& rhs){
+    return lhs.id_ < rhs.id_;
+}

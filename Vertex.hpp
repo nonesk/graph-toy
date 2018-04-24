@@ -10,8 +10,8 @@
 class Vertex{
     public:
 
+    Vertex() {};
     Vertex(int id);
-
 
     const int id() const;
 
@@ -24,10 +24,15 @@ class Vertex{
      */
     friend std::ostream& operator<< (std::ostream &out, Vertex& vertex);
     //friend bool operator< (Vertex const* v1, Vertex const* v2) const;
-
+    friend bool operator==(const Vertex& lhs, const Vertex& rhs);
+    friend bool operator!=(const Vertex& lhs, const Vertex& rhs);
+    friend bool operator<(const Vertex& lhs, const Vertex& rhs);
+    
+    
     private:
     int id_;
 };
+
 
 
 #endif //VERTEX_HPP

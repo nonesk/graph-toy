@@ -3,16 +3,19 @@ LEDAROOT=./LEDA
 
 LIBS = -Wl,-rpath=$(LEDAROOT) -L$(LEDAROOT) -lleda -lX11 -lm
 INCLUDE = -I$(LEDAROOT)/incl 
-CXXFLAGS += $(INCLUDE)
+CXXFLAGS += $(INCLUDE) -Wall -std=c++11
 
 all:
-	g++ Vertex.cpp Graph.cpp main.cpp -o build/main -Wall -std=c++11
+	g++ Vertex.cpp Graph.cpp main.cpp -o build/main $(CXXFLAGS)
 
-check:
-	g++ Vertex.cpp Graph.cpp concepts/VertexList.cpp -o build/check -Wall -std=c++11
+check: build/Vertex.o build/Graph.o
+	g++ build/Vertex.o build/Graph.o -o build/check $(CXXFLAGS)
 
-leda:
-	g++ Vertex.cpp Graph.cpp concepts/leda.cpp -o build/leda -Wall -std=c++11 $(LIBS)
+build/Vertex.o: Vertex.cpp Vertex.hpp
+	g++ -c -o build/Vertex.o Vertex.cpp $(CXXFLAGS)
+
+build/Graph.o: Graph.cpp Graph.hpp Vertex.hpp
+	g++ -c -o build/Graph.o Graph.cpp $(CXXFLAGS)
 
 clean: 
 	rm -r build/*
