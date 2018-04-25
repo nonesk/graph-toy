@@ -45,7 +45,10 @@ Vertex* Graph::addVertex(int id)
     std::map<int, Vertex*>::iterator v = vMap.find(id);
     if (v == vMap.end()){ //create vertex if not found
         vMap[id] = new Vertex(id);
+        vertex_index_[vMap[id]] = id;
         vertices_.insert(vMap[id]); // add to vertex set
+        in_edges_[vMap[id]] = std::set<edge_descriptor>();
+        out_edges_[vMap[id]] = std::set<edge_descriptor>();
     }
     return vMap[id];
 }
@@ -67,12 +70,20 @@ Edge* Graph::addEdge(int id1, int id2)
 }
 
 
-VertexSet::iterator Graph::vBegin(){
+Graph::vertex_iterator Graph::vBegin(){
     return vertices_.begin();
 };
 
-VertexSet::iterator Graph::vEnd(){
+Graph::vertex_iterator Graph::vEnd(){
     return vertices_.end();
+};
+
+Graph::vertex_const_iterator Graph::vcBegin() const {
+    return vertices_.cbegin();
+};
+
+Graph::vertex_const_iterator Graph::vcEnd() const {
+    return vertices_.cend();
 };
 
 EdgeSet::iterator Graph::eBegin(){
@@ -82,14 +93,24 @@ EdgeSet::iterator Graph::eEnd(){
     return edges_.end();
 };
 
-Graph::out_edge_iterator Graph::out_edge_begin(Graph::vertex_descriptor u)
-{
+Graph::out_edge_iterator Graph::
+out_edge_begin(Graph::vertex_descriptor u) {
     return out_edges_[u].begin();
 }
 
-Graph::out_edge_iterator Graph::out_edge_end(Graph::vertex_descriptor u)
-{
+Graph::out_edge_iterator Graph::
+out_edge_end(Graph::vertex_descriptor u) {
     return out_edges_[u].end();
+}
+
+Graph::out_edge_const_iterator Graph::
+out_edge_cbegin(Graph::vertex_descriptor u) const {
+    return out_edges_.at(u).cbegin();
+}
+
+Graph::out_edge_const_iterator Graph::
+out_edge_cend(Graph::vertex_descriptor u) const {
+    return out_edges_.at(u).cend();
 }
 
 unsigned int Graph::vSize() const
@@ -123,9 +144,19 @@ Graph::vertex_descriptor Graph::getVertex(int id)
     return vMap[id];
 }
 
+std::map <Graph::vertex_descriptor, int>& Graph::getMap()
+{
+    std::map<Graph::vertex_descriptor, int>& ref = vertex_index_;
+    return ref;
+}
+
 Graph::edges_size_type Graph::eSize() const
 {
     return edges_.size();
+}
+
+Graph::degree_size_type Graph::out_degree(vertex_descriptor u) const{
+    return out_edges_.at(u).size();
 }
 
 
@@ -135,6 +166,11 @@ Graph::edges_size_type Graph::eSize() const
 std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(Graph& g)
 {
     return {g.vBegin(), g.vEnd()};
+};
+
+std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(const Graph& g)
+{
+    return {g.vcBegin(), g.vcEnd()};
 };
 
 
@@ -153,9 +189,16 @@ Graph::vertex_descriptor target(Graph::edge_descriptor e, const Graph& g)
   return e->second;
 };
 
-std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator> out_edges(Graph::vertex_descriptor u, Graph& g)
+std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator>
+out_edges(Graph::vertex_descriptor u, Graph& g)
 {
     return {g.out_edge_begin(u), g.out_edge_end(u)};
+}
+
+std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator>
+out_edges(Graph::vertex_descriptor u, const Graph& g)
+{
+    return {g.out_edge_cbegin(u), g.out_edge_cend(u)};
 }
 
 
@@ -168,3 +211,9 @@ std::pair<Graph::edge_iterator, Graph::edge_iterator> edges(Graph& g)
 {
     return { g.eBegin(), g.eEnd() };
 };
+
+
+Graph::degree_size_type out_degree(Graph::vertex_descriptor u, const Graph& g)
+{
+    return g.out_degree(u);
+}
