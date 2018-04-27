@@ -8,6 +8,7 @@
 #include <set>
 #include "Vertex.h"
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/property_map/property_map.hpp>
 
 typedef std::set< Vertex* > VertexSet;
 typedef std::pair <Vertex*, Vertex*> Edge;
@@ -44,6 +45,10 @@ class Graph
     using out_edge_const_iterator = EdgeSet::iterator;
     using degree_size_type = unsigned int;
 
+
+    //Properties
+
+    using ColorMap = std::map<vertex_descriptor, boost::default_color_type>;
 
 
     // constructor
@@ -83,6 +88,11 @@ class Graph
 
     std::map <vertex_descriptor, int>& getMap();
 
+    ColorMap& getColorMap();
+    const ColorMap& getConstColorMap() const;
+
+    const std::map <vertex_descriptor, int>& getMap() const;
+
     private:
 
     std::map < int, std::vector<vertex_descriptor> > adjacency; //adjacency list
@@ -92,6 +102,8 @@ class Graph
 
     std::map <vertex_descriptor, EdgeSet> in_edges_;
     std::map <vertex_descriptor, EdgeSet> out_edges_;
+
+    ColorMap cmap;
 
     VertexSet vertices_; // Vertices set
     EdgeSet edges_; // Edges set

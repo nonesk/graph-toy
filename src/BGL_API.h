@@ -3,12 +3,13 @@
 
 #include "Graph.h"
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/property_map/property_map.hpp>
 
 /*******************
  * BGL expressions
  * *****************/
 
-// VertexListConcept
+ // VertexListConcept
 std::pair<Graph::vertex_iterator, Graph::vertex_iterator> 
 vertices(Graph& g);
 
@@ -49,6 +50,38 @@ void put(
   Graph::vertex_descriptor key,
   Graph::vertex_descriptor value);
 
+void put(
+  Graph::ColorMap& pmap, 
+  Graph::vertex_descriptor key,
+  boost::default_color_type value);
+
+boost::default_color_type get(
+  Graph::ColorMap& pmap, 
+  Graph::vertex_descriptor& key);
+
+boost::default_color_type get(
+  const Graph::ColorMap& pmap, 
+  Graph::vertex_descriptor& key);
+
+Graph::ColorMap& get(
+  boost::vertex_color_t tag, 
+  Graph& g);
+
+const Graph::ColorMap& get(
+  boost::vertex_color_t tag, 
+  const Graph& g);
+
+// std::map<Graph::vertex_descriptor, int> get(
+//   boost::vertex_color_t tag, 
+//   Graph& g,
+//   Graph::vertex_descriptor v);
+
+// const std::map<Graph::vertex_descriptor, int> get(
+//   boost::vertex_color_t tag, 
+//   const Graph& g,
+//   Graph::vertex_descriptor v);
+
+
 /***********************
  * Graph traits
  * *********************/
@@ -80,10 +113,35 @@ namespace boost {
     using category = read_write_property_map_tag;
   };
 
+  template <>
+  struct property_traits< std::map< Graph::vertex_descriptor, default_color_type> > {
+    using value_type = boost::default_color_type;
+    using key_type = Graph::vertex_descriptor;
+    using category = read_write_property_map_tag;
+  };
+
+  template <>
+  struct property_map<Graph, vertex_color_t> {
+    using type = associative_property_map< Graph::ColorMap >;
+    using const_type = const associative_property_map< Graph::ColorMap >;
+  };
+
+
+
+  // template <>
+  // struct property_map<Graph, vertex_index_t> {
+  //   using type = std::map<Graph::vertex_descriptor, int> ;
+  //   using const_type = const std::map<Graph::vertex_descriptor, int> ;
+  // };
+
+
+ 
 
   BOOST_CONCEPT_ASSERT((VertexAndEdgeListGraphConcept<Graph>));
   BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
   BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< std::map< Graph::vertex_descriptor, Graph::vertex_descriptor>, Graph::vertex_descriptor>));
+  BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept<  std::map< Graph::vertex_descriptor, boost::default_color_type>, Graph::vertex_descriptor>));
+  BOOST_CONCEPT_ASSERT((PropertyGraphConcept<Graph, Graph::vertex_descriptor, vertex_color_t>));
 } // namespace boost
 
 #endif //BGL_API_H

@@ -76,3 +76,51 @@ void put(
   Graph::vertex_descriptor value){
       pmap[key] = value;
   }
+
+void put(
+  std::map< Graph::vertex_descriptor, boost::default_color_type >& pmap, 
+  Graph::vertex_descriptor key,
+  boost::default_color_type value){
+      pmap[key] = value;
+  }
+
+boost::default_color_type get(
+  Graph::ColorMap& pmap, 
+  Graph::vertex_descriptor& key){
+      return pmap[key];
+  }
+
+boost::default_color_type get(
+  const Graph::ColorMap& pmap, 
+  Graph::vertex_descriptor& key){
+      return pmap.at(key);
+  }
+
+Graph::ColorMap&  get(
+  boost::vertex_color_t tag, 
+  Graph& g){
+      return g.getColorMap();
+  }
+
+const Graph::ColorMap&  get(
+  boost::vertex_color_t tag, 
+  const Graph& g){
+      return g.getConstColorMap();
+  }
+
+
+
+
+boost::default_color_type get(
+  boost::vertex_color_t tag, 
+  Graph& g,
+  Graph::vertex_descriptor v){
+      return get(get(tag, g), v);
+  }
+
+boost::default_color_type get(
+  boost::vertex_color_t tag, 
+  const Graph& g,
+  Graph::vertex_descriptor& v){
+      return get(get(tag,g), v);
+  }

@@ -53,23 +53,18 @@ int main(int argc, char* argv[])
     > parents(parents_); // predecessor map wrapper
     
 
-    boost::associative_property_map<
-        std::map<Graph::vertex_descriptor, int>
-    > vertex_map(g.getMap()); // Map Vertex* -> Vertex ID
 
     /**
      * color map
-     * index : vertex index
+     * index : vertex
      * value : boost::default_color_type
      */
-    std::vector<boost::default_color_type> 
-    cmap_(num_vertices(g));
+    std::map<Graph::vertex_descriptor, boost::default_color_type> 
+    cmap_;
 
-    /**
-     * color map wrapper
-     * uses vertex_map to store ColorValues in cmap_ at index = Vertex ID
-     */
-    auto cmap = boost::make_iterator_property_map(cmap_.begin(), vertex_map);
+    boost::associative_property_map<
+        std::map<Graph::vertex_descriptor, boost::default_color_type>
+    > cmap(cmap_);
 
     // distance container filled by BFS/DFS
     std::map<Graph::vertex_descriptor, unsigned int> 

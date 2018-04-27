@@ -158,6 +158,11 @@ std::map <Graph::vertex_descriptor, int>& Graph::getMap()
     return ref;
 }
 
+const std::map <Graph::vertex_descriptor, int>& Graph::getMap() const {
+    const std::map<Graph::vertex_descriptor, int>& ref = vertex_index_;
+    return ref;
+}
+
 Graph::edges_size_type Graph::eSize() const
 {
     return edges_.size();
@@ -167,4 +172,12 @@ Graph::degree_size_type Graph::out_degree(vertex_descriptor u) const{
     return out_edges_.at(u).size();
 }
 
+Graph::ColorMap& Graph::getColorMap(){
+    auto& ref = cmap;
+    return ref;
+};
 
+const Graph::ColorMap& Graph::getConstColorMap() const {
+    const Graph::ColorMap& ref = cmap;
+    return ref;
+}
