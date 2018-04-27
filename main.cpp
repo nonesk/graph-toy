@@ -1,50 +1,145 @@
 #include <iostream>
 #include <string>
-#include "Graph.hpp"
-#include "Vertex.hpp"
+#include <stack>
+#include "Graph.h"
+#include "Vertex.h"
+#include "BGL_API.h"
+
+#include <boost/graph/visitors.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/property_map/property_map.hpp>
 
-#include <boost/range/irange.hpp>
 
-int main(int, char**) {
-    Graph g (std::string("adjacency.json"));
+
+int main(int argc, char* argv[])
+{
+    std::string arg(argv[1]); // adjacency list as JSON
+
+    std::cout << "Loading adjacency list from " << arg << std::endl;
+
+    Graph g(arg); // declare graph
     std::cout << g << std::endl;
 
-    auto vertexIter = vertices(g);
-
-    for (auto it = vertexIter.first ; 
-        it != vertexIter.second; 
-        ++it){
-        std::cout<<**it<<std::endl;
-    }
-
-    std::cout<< "n = " << num_vertices(g) << std::endl;
-
-    std::cout << "Edges : " << std::endl;
-    for (auto it = g.eBegin();
-        it != g.eEnd();
-        ++it){
-            std::cout<< *(*it)->first << '|' << *(*it)->second << std::endl;
+    /******************
+     * using BGL implicit API
+     * ***************/
+    std::cout << "Vertices" << std::endl; // vertices(g) 
+    for (auto it = vertices(g).first; it != vertices(g).second;++it){
+        std::cout << **it << " -> ";
+        auto itPair = out_edges(*it, g);
+        for (auto itE = itPair.first; itE != itPair.second; ++itE){
+            std::cout << *(*itE)->second << " ";
         }
-
-    std::cout<< "Out-edges of vertex 1 "<< std::endl;
-    auto itPair = out_edges(g.getVertex(1), g);
-    for(auto it =itPair.first; it != itPair.second ; ++it){
-        std::cout << *(*it)->first << '|' << *(*it)->second << std::endl;
+        std::cout << std::endl;
     }
 
-    //std::map<Graph::vertex_descriptor, boost::default_color_type > cmap;
-    //boost::depth_first_search(g);
+    std::cout << "n = " << num_vertices(g) << std::endl;
 
-    boost::associative_property_map< std::map<Graph::vertex_descriptor, int> >
-    vertex_map(g.getMap());
-    for(auto it: g.getMap()){
-        std::cout << *it.first << it.second << std::endl;
+    std::cout << "Edges : " << std::endl; // edges(g)
+    for (auto it = edges(g).first; it != edges(g).second ; ++it){
+        std::cout << *(*it)->first << "->" << *(*it)->second << std::endl;
     }
+
+    /********************************************
+     * BGL API : containers
+     * ******************************************/
+
+    std::map<Graph::vertex_descriptor, Graph::vertex_descriptor> 
+    parents_; // predecessors map for BFS/DFS algorithms
+
+    boost::associative_property_map< 
+        std::map<Graph::vertex_descriptor, Graph::vertex_descriptor> 
+    > parents(parents_); // predecessor map wrapper
     
-    boost::breadth_first_search(g, g.getVertex(1), vertex_index_map(vertex_map));
-    boost::depth_first_search(g, vertex_index_map(vertex_map));
+
+    boost::associative_property_map<
+        std::map<Graph::vertex_descriptor, int>
+    > vertex_map(g.getMap()); // Map Vertex* -> Vertex ID
+
+    /**
+     * color map
+     * index : vertex index
+     * value : boost::default_color_type
+     */
+    std::vector<boost::default_color_type> 
+    cmap_(num_vertices(g));
+
+    /**
+     * color map wrapper
+     * uses vertex_map to store ColorValues in cmap_ at index = Vertex ID
+     */
+    auto cmap = boost::make_iterator_property_map(cmap_.begin(), vertex_map);
+
+    // distance container filled by BFS/DFS
+    std::map<Graph::vertex_descriptor, unsigned int> 
+    d_;
+    //std::fill_n(d_, num_vertices(g), 0);
+
+    boost::associative_property_map< 
+        std::map<Graph::vertex_descriptor, unsigned int>  
+    > d(d_); // distance map wrapper
+
+    // root vertex 
+    Graph::vertex_descriptor s = *vertices(g).first;
+    std::cout << "Root vertex : " << *s << std::endl;
+    // set root vertex in predecessor map
+    put(parents, s, s);
+
+    auto recorder = boost::record_predecessors(parents, boost::on_tree_edge{});
+    auto vis = boost::make_bfs_visitor(
+        std::make_pair(
+        boost::record_distances(d, boost::on_tree_edge()),
+        recorder)
+    );
+
+    //vis.tree_edge(*edges(g).first, g);
+
+
+    /**********************************
+     * BFS
+     * ********************************/
+
+    
+    std::stack<Graph::vertex_descriptor> Q; // used by BFS as buffer queue
+
+    boost::breadth_first_search(g, s, Q, vis, cmap);
+
+    std::cout   << "------------------" << std::endl
+                << "BFS results :" << std::endl;
+
+    for(auto it: parents_){
+        std::cout << "parent(" << *it.first << ")=" << *it.second << std::endl;
+    }
+
+    std::cout << "Distances from root(" << *s << ")" << std::endl;
+    for(auto it: d_){
+        std::cout << *it.first << " : " << it.second << std::endl;
+    }
+
+
+    /********************************************************
+     * DFS
+     * ******************************************************/
+
+    boost::depth_first_search(
+        g, 
+        boost::make_dfs_visitor(
+            std::make_pair(
+                boost::record_distances(d, boost::on_tree_edge()),
+                recorder)), 
+        cmap);
+    
+    std::cout   << "------------------" << std::endl
+                << "DFS results :" << std::endl;
+    for(auto it: parents_){
+        std::cout << "parent(" << *it.first << ")=" << *it.second << std::endl;
+    }
+
+    std::cout << "Distances from root(" << *s << ")" << std::endl;
+    for(auto it: d_){
+        std::cout << *it.first << " : " << it.second << std::endl;
+    }
 
     return 0;
 }

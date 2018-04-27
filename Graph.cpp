@@ -1,4 +1,4 @@
-#include "Graph.hpp"
+#include "Graph.h"
 
 #include "json.hpp"
 #include <iostream>
@@ -39,6 +39,7 @@ Graph::Graph(std::string json_file)
     }
     
 };
+
 
 Vertex* Graph::addVertex(int id)
 {
@@ -91,6 +92,13 @@ EdgeSet::iterator Graph::eBegin(){
 };
 EdgeSet::iterator Graph::eEnd(){
     return edges_.end();
+};
+
+EdgeSet::iterator Graph::ecBegin() const {
+    return edges_.cbegin();
+};
+EdgeSet::iterator Graph::ecEnd() const {
+    return edges_.cend();
 };
 
 Graph::out_edge_iterator Graph::
@@ -160,60 +168,3 @@ Graph::degree_size_type Graph::out_degree(vertex_descriptor u) const{
 }
 
 
-/***********************
- * BGL API
- * *********************/
-std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(Graph& g)
-{
-    return {g.vBegin(), g.vEnd()};
-};
-
-std::pair<Graph::vertex_iterator, Graph::vertex_iterator> vertices(const Graph& g)
-{
-    return {g.vcBegin(), g.vcEnd()};
-};
-
-
-Graph::vertices_size_type num_vertices(const Graph& g)
-{
-    return g.vSize();
-};
-
-Graph::vertex_descriptor source(Graph::edge_descriptor e, const Graph& g)
-{
-  return e->first;
-};
-
-Graph::vertex_descriptor target(Graph::edge_descriptor e, const Graph& g)
-{
-  return e->second;
-};
-
-std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator>
-out_edges(Graph::vertex_descriptor u, Graph& g)
-{
-    return {g.out_edge_begin(u), g.out_edge_end(u)};
-}
-
-std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator>
-out_edges(Graph::vertex_descriptor u, const Graph& g)
-{
-    return {g.out_edge_cbegin(u), g.out_edge_cend(u)};
-}
-
-
-Graph::edges_size_type num_edges(const Graph& g)
-{
-    return g.eSize();
-};
-
-std::pair<Graph::edge_iterator, Graph::edge_iterator> edges(Graph& g)
-{
-    return { g.eBegin(), g.eEnd() };
-};
-
-
-Graph::degree_size_type out_degree(Graph::vertex_descriptor u, const Graph& g)
-{
-    return g.out_degree(u);
-}

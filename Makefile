@@ -5,19 +5,22 @@ LEDAROOT=./LEDA
 #INCLUDE = -I$(LEDAROOT)/incl 
 CXXFLAGS += -Wall -std=c++11
 
-all: build/main.o build/Vertex.o build/Graph.o
-	g++ build/main.o build/Vertex.o build/Graph.o -o build/main $(LDFLAGS)
+all: build/main.o build/Vertex.o build/Graph.o build/BGL_API.o
+	g++ build/main.o build/Vertex.o build/Graph.o build/BGL_API.o -o build/main $(LDFLAGS)
 
 check: build/Vertex.o build/Graph.o
 	g++ build/Vertex.o build/Graph.o -o build/check $(LDFLAGS)
 
-build/Vertex.o: Vertex.cpp Vertex.hpp
+build/Vertex.o: Vertex.cpp Vertex.h
 	g++ -c -o $@ $< $(CXXFLAGS)
 
-build/Graph.o: Graph.cpp Graph.hpp Vertex.hpp
+build/Graph.o: Graph.cpp Graph.h Vertex.h
 	g++ -c -o $@ $< $(CXXFLAGS)
 
-build/main.o: main.cpp Graph.hpp Vertex.hpp
+build/main.o: main.cpp Graph.h Vertex.h
+	g++ -c -o $@ $< $(CXXFLAGS)
+
+build/BGL_API.o: BGL_API.cpp BGL_API.h Graph.h
 	g++ -c -o $@ $< $(CXXFLAGS)
 
 example:
