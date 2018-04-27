@@ -1,3 +1,6 @@
+#ifndef BGL_API_H
+#define BGL_API_H
+
 #include "Graph.h"
 #include <boost/graph/graph_concepts.hpp>
 
@@ -82,3 +85,5 @@ namespace boost {
   BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
   BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< std::map< Graph::vertex_descriptor, Graph::vertex_descriptor>, Graph::vertex_descriptor>));
 } // namespace boost
+
+#endif //BGL_API_H
