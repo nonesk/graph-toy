@@ -55,6 +55,12 @@ void put(
   Graph::vertex_descriptor key,
   boost::default_color_type value);
 
+void put(
+  boost::vertex_color_t ptag,
+  Graph& g, 
+  Graph::vertex_descriptor& vertex,
+  boost::default_color_type color);
+
 boost::default_color_type get(
   Graph::ColorMap& pmap, 
   Graph::vertex_descriptor& key);
@@ -71,15 +77,17 @@ const Graph::ColorMap& get(
   boost::vertex_color_t tag, 
   const Graph& g);
 
-// std::map<Graph::vertex_descriptor, int> get(
-//   boost::vertex_color_t tag, 
-//   Graph& g,
-//   Graph::vertex_descriptor v);
 
-// const std::map<Graph::vertex_descriptor, int> get(
-//   boost::vertex_color_t tag, 
-//   const Graph& g,
-//   Graph::vertex_descriptor v);
+
+boost::default_color_type get(
+  boost::vertex_color_t tag, 
+  Graph& g,
+  Graph::vertex_descriptor& v);
+
+boost::default_color_type get(
+  boost::vertex_color_t tag, 
+  const Graph& g,
+  Graph::vertex_descriptor& v);
 
 
 /***********************
@@ -111,19 +119,29 @@ namespace boost {
     using value_type = Graph::vertex_descriptor;
     using key_type = Graph::vertex_descriptor;
     using category = read_write_property_map_tag;
+    
   };
 
   template <>
-  struct property_traits< std::map< Graph::vertex_descriptor, default_color_type> > {
+  struct property_traits< Graph::ColorMap > {
     using value_type = boost::default_color_type;
     using key_type = Graph::vertex_descriptor;
     using category = read_write_property_map_tag;
+    using reference = boost::default_color_type&;
+  };
+
+  template <>
+  struct property_traits< const Graph::ColorMap > {
+    using value_type = boost::default_color_type;
+    using key_type = Graph::vertex_descriptor;
+    using category = read_write_property_map_tag;
+    using reference = boost::default_color_type&;
   };
 
   template <>
   struct property_map<Graph, vertex_color_t> {
-    using type = associative_property_map< Graph::ColorMap >;
-    using const_type = const associative_property_map< Graph::ColorMap >;
+    using type = Graph::ColorMap;
+    using const_type = const Graph::ColorMap;
   };
 
 

@@ -84,6 +84,15 @@ void put(
       pmap[key] = value;
   }
 
+void put(
+  boost::vertex_color_t ptag,
+  Graph& g, 
+  Graph::vertex_descriptor& vertex,
+  boost::default_color_type color){
+      auto& pmap = get(ptag, g);
+      pmap[vertex] = color;
+  }
+
 boost::default_color_type get(
   Graph::ColorMap& pmap, 
   Graph::vertex_descriptor& key){
@@ -114,7 +123,7 @@ const Graph::ColorMap&  get(
 boost::default_color_type get(
   boost::vertex_color_t tag, 
   Graph& g,
-  Graph::vertex_descriptor v){
+  Graph::vertex_descriptor& v){
       return get(get(tag, g), v);
   }
 
