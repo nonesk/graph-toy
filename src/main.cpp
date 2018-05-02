@@ -3,7 +3,8 @@
 #include <stack>
 #include "Graph.h"
 #include "Vertex.h"
-#include "BGL_API.h"
+#include "BGL_traits.h"
+#include "BFSVisitor.hpp"
 
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/depth_first_search.hpp>
@@ -48,9 +49,11 @@ int main(int argc, char* argv[])
     std::map<Graph::vertex_descriptor, Graph::vertex_descriptor> 
     parents_; // predecessors map for BFS/DFS algorithms
 
-    boost::associative_property_map< 
+
+    typedef boost::associative_property_map< 
         std::map<Graph::vertex_descriptor, Graph::vertex_descriptor> 
-    > parents(parents_); // predecessor map wrapper
+    > predecessor_map;
+    predecessor_map parents(parents_); // predecessor map wrapper
     
 
 
@@ -71,9 +74,10 @@ int main(int argc, char* argv[])
     d_;
     //std::fill_n(d_, num_vertices(g), 0);
 
-    boost::associative_property_map< 
+    typedef boost::associative_property_map< 
         std::map<Graph::vertex_descriptor, unsigned int>  
-    > d(d_); // distance map wrapper
+    > distance_map;
+    distance_map d(d_); // distance map wrapper
 
     // root vertex 
     Graph::vertex_descriptor s = *vertices(g).first;
@@ -82,11 +86,21 @@ int main(int argc, char* argv[])
     put(parents, s, s);
 
     auto recorder = boost::record_predecessors(parents, boost::on_tree_edge{});
-    auto vis = boost::make_bfs_visitor(
-        std::make_pair(
-        boost::record_distances(d, boost::on_tree_edge()),
-        recorder)
-    );
+    
+    auto vis = BFSVisitor<
+        std::pair<
+            boost::predecessor_recorder<predecessor_map, boost::on_tree_edge>,
+            boost::distance_recorder<distance_map, boost::on_tree_edge>
+            >
+        >(std::make_pair(
+            boost::predecessor_recorder<predecessor_map, boost::on_tree_edge>(parents),
+            boost::distance_recorder<distance_map, boost::on_tree_edge>(d))
+        );
+    // auto vis = boost::make_bfs_visitor(
+    //     std::make_pair(
+    //     boost::record_distances(d, boost::on_tree_edge()),
+    //     recorder)
+    // );
 
     //vis.tree_edge(*edges(g).first, g);
 

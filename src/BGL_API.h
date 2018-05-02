@@ -2,164 +2,235 @@
 #define BGL_API_H
 
 #include "Graph.h"
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/property_map/property_map.hpp>
-
 /*******************
  * BGL expressions
  * *****************/
 
  // VertexListConcept
+
+/**
+ * @brief Returns a pair of iterator on Graph's vertex
+ * 
+ * @param g Graph reference
+ * @return std::pair<Graph::vertex_iterator, Graph::vertex_iterator> 
+ */
 std::pair<Graph::vertex_iterator, Graph::vertex_iterator> 
 vertices(Graph& g);
 
+/**
+ * @brief Returns a pair of iterator on Graph's vertex (const version)
+ * 
+ * @param g Graph reference (const)
+ * @return std::pair<Graph::vertex_iterator, Graph::vertex_iterator> 
+ */
 std::pair<Graph::vertex_iterator, Graph::vertex_iterator> 
 vertices(const Graph& g);
 
+/**
+ * @brief Returns the number of vertex in Graph
+ * 
+ * @param g Graph reference (const)
+ * @return Graph::vertices_size_type 
+ */
 Graph::vertices_size_type 
 num_vertices(const Graph& g);
 
 // EdgesListConcept
+
+/**
+ * @brief Returns number of edges in Graph
+ * 
+ * @param g Graph reference (const)
+ * @return Graph::edges_size_type 
+ */
 Graph::edges_size_type 
 num_edges(const Graph& g);
 
+/**
+ * @brief Returns a pair of iterator on Graph's edge list
+ * 
+ * @param g Graph reference (const)
+ * @return std::pair<Graph::edge_iterator, Graph::edge_iterator> 
+ */
 std::pair<Graph::edge_iterator, Graph::edge_iterator> 
 edges(const Graph& g);
 
 // IncidenceGraphConcept
+
+/**
+ * @brief Return the tail vertex of an edge
+ * 
+ * @param e Edge descriptor
+ * @param g Graph reference
+ * @return Graph::vertex_descriptor Source vertex
+ */
 Graph::vertex_descriptor 
 source(Graph::edge_descriptor e, const Graph& g);
 
+/**
+ * @brief Returns the head vertex of an edge
+ * 
+ * @param e Edge descriptor
+ * @param g Graph reference
+ * @return Graph::vertex_descriptor Head vertex
+ */
 Graph::vertex_descriptor 
 target(Graph::edge_descriptor e, const Graph& g);
 
+/**
+ * @brief Returns a pair of iterator on out-going edges of a vertex
+ * 
+ * @param u Vertex descriptor
+ * @param g Graph reference
+ * @return std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator>  Edge iterators
+ */
 std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator> 
 out_edges(Graph::vertex_descriptor u, Graph& g);
 
+/**
+ * @brief Returns a pair of iterator on out-going edges of a vertex (const version)
+ * 
+ * @param u Vertex descriptor
+ * @param g Graph reference (const)
+ * @return std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator>  Edge iterators
+ */
 std::pair<Graph::out_edge_iterator, Graph::out_edge_iterator> 
 out_edges(Graph::vertex_descriptor u, const Graph& g);
 
+/**
+ * @brief Return the number of outgoing edges from a vertex
+ * 
+ * @param u Vertex descriptor
+ * @param g Graph reference
+ * @return Graph::degree_size_type Number of out-going edges
+ */
 Graph::degree_size_type 
 out_degree(Graph::vertex_descriptor u, const Graph& g);
 
 
-// Property map concept
+/*******************************************************************
+ * PROPERTY MAPS
+ * *****************************************************************/
 
+
+/**********************************************
+ * PREDECESSOR MAP
+ * ********************************************/
+
+/**
+ * @brief Put parent vertex in Predecessor Map
+ * 
+ * @param pmap Predecessor Map 
+ * @param key Child vertex
+ * @param value Parent vertex
+ */
 void put(
   std::map< Graph::vertex_descriptor,Graph::vertex_descriptor >& pmap, 
   Graph::vertex_descriptor key,
   Graph::vertex_descriptor value);
 
+
+/*********************************************
+ * COLOR MAP
+ * *******************************************/
+
+/**
+ * @brief Set vertex color
+ * 
+ * @param pmap Color map
+ * @param key Vertex to update
+ * @param value Color value
+ */
 void put(
   Graph::ColorMap& pmap, 
   Graph::vertex_descriptor key,
   boost::default_color_type value);
 
+/**
+ * @brief Set vertex property for PropertyTag color
+ * 
+ * @param ptag Property tag for color map
+ * @param g Graph reference
+ * @param vertex Vertex reference
+ * @param color Color value
+ */
 void put(
   boost::vertex_color_t ptag,
   Graph& g, 
   Graph::vertex_descriptor& vertex,
   boost::default_color_type color);
 
+/**
+ * @brief Get color value for Vertex from ColorMap
+ * 
+ * @param pmap Color map
+ * @param key Vertex descriptor
+ * @return boost::default_color_type Color value
+ */
 boost::default_color_type get(
   Graph::ColorMap& pmap, 
   Graph::vertex_descriptor& key);
 
+
+/**
+ * @brief Get color value for Vertex from ColorMap (const version)
+ * 
+ * @param pmap Color map
+ * @param key Vertex descriptor
+ * @return boost::default_color_type Color value
+ */
 boost::default_color_type get(
   const Graph::ColorMap& pmap, 
   Graph::vertex_descriptor& key);
 
+/**
+ * @brief Get color map using PropertyTag
+ * 
+ * @param tag Property tag
+ * @param g Graph reference
+ * @return Graph::ColorMap& ColorMap reference 
+ */
 Graph::ColorMap& get(
   boost::vertex_color_t tag, 
   Graph& g);
 
+/**
+ * @brief Get color map using PropertyTag (const version)
+ * 
+ * @param tag Property tag
+ * @param g Graph reference
+ * @return Graph::ColorMap& ColorMap reference 
+ */
 const Graph::ColorMap& get(
   boost::vertex_color_t tag, 
   const Graph& g);
 
 
-
+/**
+ * @brief Get color of vertex using PropertyTag
+ * 
+ * @param tag Property tag
+ * @param g Graph reference
+ * @param v Vertex descriptor
+ * @return boost::default_color_type Color value
+ */
 boost::default_color_type get(
   boost::vertex_color_t tag, 
   Graph& g,
   Graph::vertex_descriptor& v);
 
+/**
+ * @brief Get color of vertex using PropertyTag (const version)
+ * 
+ * @param tag Property tag
+ * @param g Graph reference (const)
+ * @param v Vertex descriptor
+ * @return boost::default_color_type Color value
+ */
 boost::default_color_type get(
   boost::vertex_color_t tag, 
   const Graph& g,
   Graph::vertex_descriptor& v);
 
-
-/***********************
- * Graph traits
- * *********************/
-
-namespace boost {
-  template <>
-  struct graph_traits< Graph > {
-    using vertex_descriptor = Graph::vertex_descriptor;
-    using edge_descriptor = Graph::edge_descriptor;
-    using directed_category = Graph::directed_category;
-    using edge_parallel_category = Graph::edge_parallel_category;
-    using traversal_category = Graph::traversal_category;
-
-    // iterator typedefs...
-    using vertex_iterator = Graph::vertex_iterator;
-    using edge_iterator = Graph::edge_iterator;
-    using out_edge_iterator = Graph::out_edge_iterator;
-    using vertices_size_type = Graph::vertices_size_type;
-    using edges_size_type = Graph::edges_size_type;
-    using degree_size_type = Graph::degree_size_type;
-
-    static Graph::vertex_descriptor null_vertex() { return nullptr;};
-  };
-
-  template <>
-  struct property_traits< std::map< Graph::vertex_descriptor, Graph::vertex_descriptor> > {
-    using value_type = Graph::vertex_descriptor;
-    using key_type = Graph::vertex_descriptor;
-    using category = read_write_property_map_tag;
-    
-  };
-
-  template <>
-  struct property_traits< Graph::ColorMap > {
-    using value_type = boost::default_color_type;
-    using key_type = Graph::vertex_descriptor;
-    using category = read_write_property_map_tag;
-    using reference = boost::default_color_type&;
-  };
-
-  template <>
-  struct property_traits< const Graph::ColorMap > {
-    using value_type = boost::default_color_type;
-    using key_type = Graph::vertex_descriptor;
-    using category = read_write_property_map_tag;
-    using reference = boost::default_color_type&;
-  };
-
-  template <>
-  struct property_map<Graph, vertex_color_t> {
-    using type = Graph::ColorMap;
-    using const_type = const Graph::ColorMap;
-  };
-
-
-
-  // template <>
-  // struct property_map<Graph, vertex_index_t> {
-  //   using type = std::map<Graph::vertex_descriptor, int> ;
-  //   using const_type = const std::map<Graph::vertex_descriptor, int> ;
-  // };
-
-
- 
-
-  BOOST_CONCEPT_ASSERT((VertexAndEdgeListGraphConcept<Graph>));
-  BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
-  BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept< std::map< Graph::vertex_descriptor, Graph::vertex_descriptor>, Graph::vertex_descriptor>));
-  BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept<  std::map< Graph::vertex_descriptor, boost::default_color_type>, Graph::vertex_descriptor>));
-  BOOST_CONCEPT_ASSERT((PropertyGraphConcept<Graph, Graph::vertex_descriptor, vertex_color_t>));
-} // namespace boost
 
 #endif //BGL_API_H
