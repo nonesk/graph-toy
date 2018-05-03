@@ -1,9 +1,17 @@
 #include "Vertex.h"
 
 
-Vertex::Vertex(int id) : id_(id) {};
+Vertex::Vertex(int id, Vertex::Type t) : id_(id), type_(t) {};
 
 const int Vertex::id() const { return id_; };
+
+const Vertex::Type Vertex::type() const{
+    return type_;
+}
+
+void Vertex::setType(Vertex::Type t){
+    type_ = t;
+}
 
 std::ostream& operator<< (std::ostream &out, Vertex& vertex){
         return out << vertex.id();

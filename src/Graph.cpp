@@ -45,7 +45,7 @@ Vertex* Graph::addVertex(int id)
 {
     std::map<int, Vertex*>::iterator v = vMap.find(id);
     if (v == vMap.end()){ //create vertex if not found
-        vMap[id] = new Vertex(id);
+        vMap[id] = new Vertex(id, static_cast<Vertex::Type>(id%2));
         vertex_index_[vMap[id]] = id;
         vertices_.insert(vMap[id]); // add to vertex set
         in_edges_[vMap[id]] = std::set<edge_descriptor>();

@@ -17,7 +17,7 @@ class BFSVisitor : public boost::bfs_visitor<Visitors>
     // void discover_vertex(boost::graph_traits<Graph>::vertex_descriptor u, Graph& g);
     void examine_vertex(boost::graph_traits<Graph>::vertex_descriptor u, const Graph& g){
         boost::bfs_visitor<Visitors>::examine_vertex(u, g);
-        std::cout <<"Examining vertex:" << *u <<std::endl;
+        std::cout <<"Examining vertex:" << u->type() <<std::endl;
     }
     // void examine_edge(boost::graph_traits<Graph>::edge_descriptor e, Graph& g);
     // void tree_edge(boost::graph_traits<Graph>::edge_descriptor e, Graph& g);

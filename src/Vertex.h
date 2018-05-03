@@ -9,11 +9,13 @@
  */
 class Vertex{
     public:
-
+    enum Type {PROD, REAC};
     Vertex() {};
-    Vertex(int id);
+    Vertex(int id, Vertex::Type t = PROD);
 
     const int id() const;
+    const Type type() const;
+    void setType(Type t);
 
     /**
      * @brief Operator << overload
@@ -31,6 +33,8 @@ class Vertex{
     
     private:
     int id_;
+    
+    Vertex::Type type_;
 };
 
 
